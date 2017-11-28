@@ -11,12 +11,13 @@ class Item:
         return str_to_return
 
 
-connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=BlackFidaySales; Trusted_Connection=yes")
+
 
 
 def getItemByID(id):
+    connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=DBExam2; Trusted_Connection=yes")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM Item;")
+    cursor.execute("SELECT * FROM Book;")
     row = cursor.fetchone()
     while row:
         if len(row) == 0:
@@ -33,6 +34,7 @@ def getItemByID(id):
 
 
 def getItemByIDVersion2(id):
+    connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=DBExam2; Trusted_Connection=yes")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM Item where id = '" + str(id) + "';")
     row = cursor.fetchone()

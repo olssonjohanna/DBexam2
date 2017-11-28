@@ -19,20 +19,22 @@ class ManageBook:
         pass
 
     def getBookByID(self,id):
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=DBexam2; Trusted_Connection=yes")
+        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
         #get a book by id
         #return it as type of Book
         #if book oes not exist return None
+
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM Book;")
-        row = cursor.fechone()
+        cursor.execute("SELECT * FROM ISBNBook where ISBN in (select ISBN from Book where bookID = "+str(id)+");")
+        row = cursor.fetchone()
+        book = None
         while row:
             if len(row)==0:
                 break
-            if row[0] == id:
-                book = Book(row.title,row.isbn,row.id,row.pages,row.author_name)
-                break
+
+            book = Book(row[1],row[0],id,row[2],"")
+            break
 
         cursor.close()
         connection.commit()
@@ -78,3 +80,9 @@ class ManageBook:
 
         #bring all book from db
         #return list
+
+
+var = ManageBook()
+id = 10
+result = var.getBookByID(id)
+print(result.title)
