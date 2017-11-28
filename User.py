@@ -1,7 +1,5 @@
 import pyodbc
 
-
-
 class User:
     def __init__(self,name,email,address,password):
         self.name = name

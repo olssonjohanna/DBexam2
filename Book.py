@@ -1,4 +1,5 @@
 import pyodbc
+
 class Book:
     def __init__(self,title,isbn,id,pages,author_name):
         self.title = title
@@ -18,12 +19,8 @@ class ManageBook:
     def __init__(self):
         pass
 
-    def getBookByID(self,id):
+    def getBookByID(self,id): #FUNKAR!
         connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
-
-        #get a book by id
-        #return it as type of Book
-        #if book oes not exist return None
 
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM ISBNBook where ISBN in (select ISBN from Book where bookID = "+str(id)+");")
@@ -39,50 +36,58 @@ class ManageBook:
         cursor.close()
         connection.commit()
         connection.close()
+
         return book
 
-    def getBooksByIsbn(self,isbn):
-        #bring books by isbn
-        #return list
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=DBexam2; Trusted_Connection=yes")
+    def getBooksByIsbn(self,isbn): #FUNKAR!
+        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM Book;")
-        row = cursor.fechone()
+        cursor.execute("SELECT * FROM ISBNBook where ISBN in (select ISBN from Book where ISBN = " + str(isbn) + ");")
+        row = cursor.fetchone()
+        book = None
+
         while row:
             if len(row) == 0:
                 break
-            if row == isbn:
-                book2=Book(row.title,row.isbn,row.id,row.pages,row.author_name)
-                break
+
+            book = Book(row[1], row[0], row[2], isbn, "")
+            break
 
         cursor.close()
         connection.commit()
         connection.close()
-        return book2
-    def getAllBooks(self):
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=DBexam2; Trusted_Connection=yes")
+
+        return book
+
+    def getAllBooks(self): #FUNKAR!
+        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM Book; ")
-        row = cursor.fechone()
+        cursor.execute("SELECT ISBNBook.Title, ISBNBook.Pages, ISBNBook.ISBN, Author.Name, bookID from ISBNBook join Book on ISBNBook.ISBN = Book.ISBN join Relation on Relation.ISBN = ISBNBook.ISBN join Author on Author.Email = Relation.Email")
+        row = cursor.fetchone()
+
+        list_of_Books = []
+
         while row:
             if len(row) == 0:
                 break
+
             else:
-                self.list_of_Books = []
-                new_book = Book(row.title,row.isb,row.id,row.pages,row.author_name)
-                self.list_of_Books.append(new_book)
+                new_book = Book(row[0], row[1], row[2], row[3], "")
+                list_of_Books.append(new_book)
+                row = cursor.fetchone()
 
         cursor.close()
         connection.commit()
         connection.close()
-        return self.list_of_Books
 
+        return list_of_Books
 
-        #bring all book from db
-        #return list
 
 
 var = ManageBook()
-id = 10
-result = var.getBookByID(id)
-print(result.title)
+result = var.getAllBooks()
+print(result)
+
+for each in result:
+    print(each.title)
