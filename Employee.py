@@ -1,4 +1,4 @@
-#12
+
 class Employee:
     def __init__(self,name,email,address,password,salary):
         self.name = name

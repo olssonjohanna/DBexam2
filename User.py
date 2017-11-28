@@ -1,4 +1,3 @@
-#12
 class User:
     def __init__(self,name,email,address,password):
         self.name = name
@@ -16,16 +15,22 @@ class User:
         #the book will ne left back if it's really borrowed and to be sure of that you must see the db
         pass
 
+    def toString(self):
+        return_string = "|Name: " + str(self.name) + " |Email: " + str(self.email) + " |Address: " + str(self.address) + " |Password: " + str(self.password)
+        return return_string
+
 class ManageUsers:
     def __init__(self):
         self.list_of_online_users = []
 
     def addUser(self,id,name,email,address,password):
+
         #check that same email does not exists and if exists return false
         #else add user to the db and return true
         pass
 
     def tryToLogIn(self,email,password):
+
         #see if email and password are in db
         #if they are, bring all other data and create user
         #then add the user to the list of online users
@@ -34,7 +39,13 @@ class ManageUsers:
         pass
 
     def getAllUsers(self):
-        #return list of all users
+        return_string = []
+        for User in DATABAS:
+            return_string = return_string + User.toString() + "\n"
+            #bilda object
+            #lägg obj iu lista
+        return return_string
+
         pass
 
     def logOut(self,email):
