@@ -53,13 +53,16 @@ class ManageUsers:
     def __init__(self):
         self.list_of_online_users = []
 
-    def addUser(self,id,name,email,address,password):
+    def addUser(self,email,name,address,password):
+        # check that same email does not exists and if exists return false
+        # else add user to the db and return true
+
         connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM User")
-        data = cursor.fetchone
+        cursor.execute("SELECT * FROM Users")
+        data = cursor.fetchone()
 
-        if email == data.email:
+        if email == data[1]:
             return False
 
             cursor.close()
@@ -67,11 +70,11 @@ class ManageUsers:
             connection.close()
 
         else:
-            new_user = (id, name, email, address, password)
-
+            connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+            new_user = (name, email, address, password)
             cursor = connection.cursor()
-            cursor.execute("INSERT " + str(new_user) + " TO User")
-            data = cursor.fetchone
+            cursor.execute("INSERT INTO Users VALUES'"+ str(new_user) +"';")
+            cursor.fetchone()
 
             return True
 
@@ -79,19 +82,18 @@ class ManageUsers:
             connection.commit()
             connection.close()
 
-        pass
-
-    def tryToLogIn(self,email,password):
+    def tryToLogIn(self,email,password): #FUNKAR!
         connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM User where email = " + str(email) + " and where password = " + str(password) + "")
-        data = cursor.fetchone
+        cursor.execute("SELECT * FROM Users WHERE UserEmail = '" + str(email) + "' AND Password = '"+str(password)+"';")
+
+        data = cursor.fetchone()
 
         if data == 0:
             return False
 
         else:
-            new_user = User(data.name, data.email, data.address, data.password)
+            new_user = User(data[0], data[1], data[2], data[3])
             self.list_of_online_users.append(new_user)
             return True
 
@@ -141,9 +143,12 @@ class ManageUsers:
         return None
 
 var = ManageUsers()
-result = ManageUsers.tryToLogIn = lambda: ("jens@email.se", "stol4")
-print(result)
+name = "Ulf"
+email = "jens@email.se"
+passw = "stol4"
+address = "K 12"
+password = "11aa"
 
-for user in result:
-    print(user.email)
+result = var.addUser(email,name,address,password)
+print(result)
 

@@ -11,7 +11,7 @@ class Book:
         self.userThatBorrowed = None
         self.list_of_reserved_to = []
 
-    def getStringOfInfoAboutAuthor(self):
+    def getStringOfInfoAboutAuthor(self): #VG nivå
         #work with db and return String
         pass
 
