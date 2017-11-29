@@ -28,7 +28,7 @@ class ManageEmployees:
         #self.connection.cursor()
         cursor = self.connection.cursor()
         try:
-            cursor.execute("INSERT INTO Employee VALUES('"+str(email)+ str(name) +str(address)+str(password)+"');" )
+            cursor.execute("INSERT INTO Employee VALUES('"+str(email)+ str(name) + str(salary)+  str(address) + str(password)+ "');")
             cursor.fetchone()
 
             cursor.close()
@@ -45,7 +45,6 @@ class ManageEmployees:
 
     def tryToLogIn(self,email,password): #Klar, måste testas
 
-        #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM Employee WHERE EmployeeEmail ='"+ str(email)+ "'AND Password ='"+ str(password)+ "';")
         data = cursor.fetchone()
@@ -70,7 +69,6 @@ class ManageEmployees:
 
     def getAllEmployees(self): #KLAR
         #return list of all employees
-        #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM Employee;")
         data = cursor.fetchone()
