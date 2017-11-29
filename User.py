@@ -23,14 +23,14 @@ class User:
         connection.close()
 
         #work here on DB and list of booked
-        pass
+
 
     def leaveBackBook(self,book_id):
         # the book will ne left back if it's really borrowed and to be sure of that you must see the db
         connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = connection.cursor()
         cursor.execute("SELECT * from Borrow where book_id = '" + str(book_id) + "';")
-        data = cursor.fetchone
+        data = cursor.fetchone()
 
         if data == 0:
             return False
