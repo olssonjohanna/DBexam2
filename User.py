@@ -18,7 +18,7 @@ class User:
         cursor.execute("SELECT * FROM Book where isbn = '" + str(isbn) + "';")
         data = cursor.fetchone
 
-
+        self.list_of_booked_books.append(data)
 
         cursor.close()
         self.connection.commit()
@@ -36,15 +36,19 @@ class User:
 
         elif data == book_id:
             ("DELETE * FROM Borrow WHERE bookID = '" + str(book_id) + "';")
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
             return True
 
         else:
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
             return False
 
 
-        cursor.close()
-        self.connection.commit()
-        self.connection.close()
+
 
     def toString(self):
         return_string = "|Name: " + str(self.name) + " |Email: " + str(self.email) + " |Address: " + str(self.address) + " |Password: " + str(self.password)
@@ -56,21 +60,28 @@ class ManageUsers:
         self.connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
 
-    def addUser(self,email,name,address,password): #FUNKAR men uppdateras inte i DB
+    def addUser(self,email,name,address,password): #KLAR måste testas
         # check that same email does not exists and if exists return false
         # else add user to the db and return true
 
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
-        new_user = (name, email, address, password)
+        #self.connection.cursor()
         cursor = self.connection.cursor()
-        cursor.execute("INSERT INTO Users VALUES "+ str(new_user) + ";")
-    #cursor.fetchone()
+        try:
+            cursor.execute("INSERT INTO Users VALUES('"+str(email)+ str(name) +str(address)+str(password)+"');")
+            cursor.fetchone()
 
-        return True
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
 
-        cursor.close()
-        self.connection.commit()
-        self.connection.close()
+            return True
+
+        except:
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
+            return False
 
     def tryToLogIn(self,email,password): #FUNKAR!
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
@@ -83,15 +94,18 @@ class ManageUsers:
             return False
 
         else:
-            new_user = User(data[0], data[1], data[2], data[3])
+            new_user = User(data[1], data[0], data[2], data[3])
             self.list_of_online_users.append(new_user)
+
+
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
             return True
 
-        cursor.close()
-        self.connection.commit()
-        self.connection.close()
 
-    def getAllUsers(self):  #FUNKAR
+
+    def getAllUsers(self):  #FUNKAR måste testas igen
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM Users;")
@@ -115,7 +129,7 @@ class ManageUsers:
         self.connection.commit()
         self.connection.close()
 
-    def logOut(self,email): #INTE KLAR
+    def logOut(self,email): #KLAR måste testas
         for i in range(len(self.list_of_online_users)):
             if self.list_of_online_users[i].email == email:
                 userToBeOutLogged = self.list_of_online_users.pop(i)
@@ -124,6 +138,7 @@ class ManageUsers:
 
                 cursor = self.connection.cursor()
                 cursor.execute("UPDATE Users SET Name = '"+userToBeOutLogged.name+"'WHERE UserEmail= ' " +str(email)+"', Adress ='"+userToBeOutLogged.address+"'WHERE UserEmail = '"+ str(email)+"',Password='"+userToBeOutLogged.Password+"'WHERE UserEmail = '" + str(email)+ "';")
+                cursor.fetchone()
 
                 cursor.close()
                 self.connection.commit()
@@ -132,12 +147,18 @@ class ManageUsers:
                 #save changes of user to DB
                 break
 
-    def getAnOnlineUserByEmail(self,email):
+    def getAnOnlineUserByEmail(self,email): #måste testas
         for i in range(len(self.list_of_online_users)):
             if self.list_of_online_users[i].email == email:
                 return self.list_of_online_users[i]
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM Users WHERE UserEmail = ' "+ str(email)+ "';")
 
-        return None
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
+        else:
+            return None
 
 
 
@@ -151,8 +172,8 @@ address = "K 12"
 password = "11aa"
 bookid = "5"
 
+
 var2 = User(name, email, address, password)
 
 result = var.addUser(email,name,address,password)
 print(result)
-#

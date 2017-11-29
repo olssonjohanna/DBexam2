@@ -14,6 +14,7 @@ class Employee:
         #or this user is actually first in the queue
 
 
+
         pass
 
 class ManageEmployees:
@@ -21,25 +22,13 @@ class ManageEmployees:
         self.list_of_online_employees = []
         self.connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
-    def addEmployee(self,salary,name,email,address,password):
+    def addEmployee(self,salary,name,email,address,password): #Klar Måste testas
 
 
+        #self.connection.cursor()
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM Employee")
-        data = cursor.fetchone()
-
-        if email == data[0]:
-            cursor.close()
-            self.connection.commit()
-            self.connection.close()
-            return False
-
-
-        else:
-            #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
-            new_Employee = Employee(salary,name,email,address,password)
-            cursor = self.connection.cursor()
-            cursor.execute("INSERT INTO Employee VALUES'"+str(new_Employee)+"';" )
+        try:
+            cursor.execute("INSERT INTO Employee VALUES('"+str(email)+ str(name) +str(address)+str(password)+"');" )
             cursor.fetchone()
 
             cursor.close()
@@ -48,10 +37,13 @@ class ManageEmployees:
 
             return True
 
+        except:
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
+            return False
 
-
-
-    def tryToLogIn(self,email,password):
+    def tryToLogIn(self,email,password): #Klar, måste testas
 
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()
@@ -76,7 +68,7 @@ class ManageEmployees:
             return False
 
 
-    def getAllEmployees(self):
+    def getAllEmployees(self): #KLAR
         #return list of all employees
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()
@@ -94,7 +86,7 @@ class ManageEmployees:
         return list_of_Employee
 
 
-    def logOut(self,email):
+    def logOut(self,email): #KLAR ej testad
         for i in range(len(self.list_of_online_employees)):
             if self.list_of_online_employees[i].email == email:
                 employeeToBeOutLogged = self.list_of_online_employees.pop(i)
@@ -112,14 +104,23 @@ class ManageEmployees:
                 break
 
 
-    def getAnOnlineEmployeeByEmail(self,email):
+    def getAnOnlineEmployeeByEmail(self,email): #Klar Måste testas
         for i in range(len(self.list_of_online_employees)):
             if self.list_of_online_employees[i].email == email:
                 return self.list_of_online_employees[i]
 
-        return None
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM Employee WHERE EmployeeEmail='"+ str(email)+"';")
+            cursor.fetchone()
 
-    def riseSalaryOfAllEmployees(self,increament):
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
+        else:
+
+            return None
+
+    def riseSalaryOfAllEmployees(self,increament): # KLAR måste testas
         #change some values in DB
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()

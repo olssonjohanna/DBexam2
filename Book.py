@@ -17,12 +17,12 @@ class Book:
 
 class ManageBook:
     def __init__(self):
-        pass
+        self.connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
     def getBookByID(self,id): #FUNKAR!
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+        #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM ISBNBook where ISBN in (select ISBN from Book where bookID = "+str(id)+");")
         row = cursor.fetchone()
         book = None
@@ -34,15 +34,15 @@ class ManageBook:
             break
 
         cursor.close()
-        connection.commit()
-        connection.close()
+        self.connection.commit()
+        self.connection.close()
 
         return book
 
     def getBooksByIsbn(self,isbn): #FUNKAR!
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+#        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM ISBNBook where ISBN in (select ISBN from Book where ISBN = " + str(isbn) + ");")
         row = cursor.fetchone()
         book = None
@@ -55,14 +55,16 @@ class ManageBook:
             break
 
         cursor.close()
-        connection.commit()
-        connection.close()
+
+
+        self.connection.commit()
+        self.connection.close()
 
         return book
 
     def getAllBooks(self): #FUNKAR!
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
-        cursor = connection.cursor()
+        #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+        cursor = self.connection.cursor()
         cursor.execute("SELECT ISBNBook.Title, ISBNBook.Pages, ISBNBook.ISBN, Author.Name, bookID from ISBNBook join Book on ISBNBook.ISBN = Book.ISBN join Relation on Relation.ISBN = ISBNBook.ISBN join Author on Author.Email = Relation.Email")
         row = cursor.fetchone()
 
@@ -78,8 +80,8 @@ class ManageBook:
                 row = cursor.fetchone()
 
         cursor.close()
-        connection.commit()
-        connection.close()
+        self.connection.commit()
+        self.connection.close()
 
         return list_of_Books
 
