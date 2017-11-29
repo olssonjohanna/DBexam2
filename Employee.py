@@ -18,11 +18,12 @@ class Employee:
 class ManageEmployees:
     def __init__(self):
         self.list_of_online_employees = []
+        self.connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
     def addEmployee(self,salary,name,email,address,password):
 
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
-        cursor = connection.cursor()
+
+        cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM Employee")
         data = cursor.fetchone()
 
@@ -30,26 +31,26 @@ class ManageEmployees:
             return False
 
             cursor.close()
-            connection.commit()
-            connection.close()
+            self.connection.commit()
+            self.connection.close()
         else:
-            connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+            #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
             new_Employee = Employee(salary,name,email,address,password)
-            cursor = connection.cursor()
+            cursor = self.connection.cursor()
             cursor.execute("INSERT INTO Employee VALUES'"+str(new_Employee)+"';" )
             cursor.fetchone()
 
             return True
 
             cursor.close()
-            connection.commit()
-            connection.close()
+            self.connection.commit()
+            self.connection.close()
 
 
     def tryToLogIn(self,email,password):
 
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
-        cursor = connection.cursor()
+        #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+        cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM Employee WHERE EmployeeEmail ='"+ str(email)+ "'AND Password ='"+ str(password)+ "';")
         data = cursor.fetchone()
         if data:
@@ -60,13 +61,13 @@ class ManageEmployees:
             return False
 
         cursor.close()
-        connection.commit()
-        connection.close()
+        self.connection.commit()
+        self.connection.close()
 
     def getAllEmployees(self):
         #return list of all employees
-        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
-        cursor = connection.cursor()
+        #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+        cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM EMployee;")
         data = cursor.fetchone()
         list_of_Employee =[]
@@ -78,8 +79,8 @@ class ManageEmployees:
                 list_of_Employee.append(new_Employee)
             return list_of_Employee
         cursor.close()
-        connection.commit()
-        connection.close()
+        self.connection.commit()
+        self.connection.close()
 
 
     def logOut(self,email):
@@ -98,5 +99,9 @@ class ManageEmployees:
 
     def riseSalaryOfAllEmployees(self,increament):
         #change some values in DB
-
-        pass
+        #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+        cursor = self.connection.cursor()
+        cursor.execute("UPDATE Employee SET Salary = Salary" + str(increament))
+        cursor.fetchone()
+        self.connection.commit()
+        self.connection.close()
