@@ -8,7 +8,7 @@ class User:
         self.password = password
         self.list_of_booked_books = []
         self.list_of_borrowed_books = []
-        self.connection =pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+        self.connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
     def reserve(self,isbn):
         # work here on DB and list of booked
@@ -123,7 +123,7 @@ class ManageUsers:
                 #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
                 cursor = self.connection.cursor()
-                cursor.execute("UPDATE .... ")
+                cursor.execute("UPDATE Users SET Name = '"+userToBeOutLogged.name+"'WHERE UserEmail= ' " +str(email)+"', Adress ='"+userToBeOutLogged.address+"'WHERE UserEmail = '"+ str(email)+"',Password='"+userToBeOutLogged.Password+"'WHERE UserEmail = '" + str(email)+ "';")
 
                 cursor.close()
                 self.connection.commit()

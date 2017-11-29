@@ -13,6 +13,7 @@ class Employee:
         #that no one else in queue to reserve the book
         #or this user is actually first in the queue
 
+
         pass
 
 class ManageEmployees:
@@ -27,12 +28,13 @@ class ManageEmployees:
         cursor.execute("SELECT * FROM Employee")
         data = cursor.fetchone()
 
-        if email == data[1]:
-            return False
-
+        if email == data[0]:
             cursor.close()
             self.connection.commit()
             self.connection.close()
+            return False
+
+
         else:
             #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
             new_Employee = Employee(salary,name,email,address,password)
@@ -40,11 +42,13 @@ class ManageEmployees:
             cursor.execute("INSERT INTO Employee VALUES'"+str(new_Employee)+"';" )
             cursor.fetchone()
 
-            return True
-
             cursor.close()
             self.connection.commit()
             self.connection.close()
+
+            return True
+
+
 
 
     def tryToLogIn(self,email,password):
@@ -54,33 +58,40 @@ class ManageEmployees:
         cursor.execute("SELECT * FROM Employee WHERE EmployeeEmail ='"+ str(email)+ "'AND Password ='"+ str(password)+ "';")
         data = cursor.fetchone()
         if data:
-            new_employee = Employee(data[0],data[1],data[2],data[3], data[4])
+            new_employee = Employee(data[1],data[0],data[3],data[4], data[2])
             self.list_of_online_employees.append(new_employee)
+            cursor.fetchone()
+
+
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
+
             return True
         else:
+            cursor.close()
+            self.connection.commit()
+            self.connection.close()
+
             return False
 
-        cursor.close()
-        self.connection.commit()
-        self.connection.close()
 
     def getAllEmployees(self):
         #return list of all employees
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM EMployee;")
+        cursor.execute("SELECT * FROM Employee;")
         data = cursor.fetchone()
         list_of_Employee =[]
         while data:
-            if len(data) == 0:
-                break
-            else:
-                new_Employee = Employee(data[0],data[1],data[2],data[3],data[4])
-                list_of_Employee.append(new_Employee)
-            return list_of_Employee
+
+            new_Employee = Employee(data[1],data[0],data[3],data[4],data[2])
+            list_of_Employee.append(new_Employee)
+            data = cursor.fetchone()
         cursor.close()
         self.connection.commit()
         self.connection.close()
+        return list_of_Employee
 
 
     def logOut(self,email):
@@ -88,7 +99,18 @@ class ManageEmployees:
             if self.list_of_online_employees[i].email == email:
                 employeeToBeOutLogged = self.list_of_online_employees.pop(i)
                 #save changes of employee to DB
+
+
+                cursor = self.connection.cursor()
+                cursor.execute("UPDATE Employee SET Name = '"+employeeToBeOutLogged.name+"' WHERE EmployeeEmail = '"+ str(email)+"', Salary = '"+employeeToBeOutLogged.salary+"' WHERE EmployeeEmail = '"+ str(email) + ", Adress = '"+employeeToBeOutLogged.adress+"' WHERE EmployeeEmail = '"+ str(email) + " , Password = '"+employeeToBeOutLogged.password+"' WHERE EmployeeEmail = '" + str(email) + "';" )
+                cursor.fetchone()
+
+                cursor.close()
+                self.connection.commit()
+                self.connection.close()
+
                 break
+
 
     def getAnOnlineEmployeeByEmail(self,email):
         for i in range(len(self.list_of_online_employees)):
