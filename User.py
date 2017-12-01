@@ -101,7 +101,7 @@ class ManageUsers:
             self.connection.close()
             return True
 
-    def getAllUsers(self): #printar obj
+    def getAllUsers(self):
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM Users;")
@@ -122,7 +122,7 @@ class ManageUsers:
         self.connection.commit()
         self.connection.close()
 
-    def logOut(self,email):  #returnerar None
+    def logOut(self,email):
         print(self.list_of_online_users)
         for i in range(len(self.list_of_online_users)):
             if self.list_of_online_users[i].email == email:

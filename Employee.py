@@ -32,18 +32,21 @@ class Employee:
         # add to borrwing table and you must be sure that book_id is not borrowed
         # at the time
 
+    def toString(self):
+        return self.name
+
 class ManageEmployees:
     def __init__(self):
         self.list_of_online_employees = []
         self.connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
 
-    def addEmployee(self,salary,name,email,address,password): #felmeddelande, fråg om int salary
+    def addEmployee(self,salary,name,email,address,password):
 
         #self.connection.cursor()
         cursor = self.connection.cursor()
         try:
-            cursor.execute("INSERT INTO Employee VALUES ('" + str (email) + "','" +  str (name) + "','" +  str(salary) + "','" + str(address) + "','" + str(password) +"')")
+            cursor.execute("INSERT INTO Employee VALUES ('" + str (email) + "','" +  str (name) + "'," +  str(salary) + ",'" + str(address) + "','" + str(password) +"');")
 
             cursor.close()
             self.connection.commit()
@@ -80,7 +83,7 @@ class ManageEmployees:
 
             return False
 
-    def getAllEmployees(self): #hur printar vi ut från obj?
+    def getAllEmployees(self):
         #return list of all employees
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM Employee;")
@@ -97,7 +100,7 @@ class ManageEmployees:
         self.connection.close()
         return list_of_Employee
 
-    def logOut(self,email): #returnerar none
+    def logOut(self,email):
         for i in range(len(self.list_of_online_employees)):
             print (self.list_of_online_employees)
 
@@ -122,36 +125,41 @@ class ManageEmployees:
 
         return None
 
-    def riseSalaryOfAllEmployees(self,increament): #FRÅGA
+    def riseSalaryOfAllEmployees(self,increament):
 
         #change some values in DB
         cursor = self.connection.cursor()
-        cursor.execute("UPDATE Employee SET Salary = Salary " + str(increament))
+        cursor.execute("UPDATE Employee SET Salary = Salary + " + str(increament))
 
         cursor.close()
         self.connection.commit()
         self.connection.close()
         return True
 
+
 #TESTA
 m = ManageEmployees()
-#res = m.addEmployee(210,"dSKDGJkxkxkxSGD", "kdwsduj@hot.se", "Kdd 1", "ssdkdkj")
+#res = m.addEmployee(210,"ojiij", "kdw", "Kdd 1", "ssdkdkj")
 #print (res)
 
-res1 = m.tryToLogIn("david@gmail.se", "123")
-print (res1)
+#res1 = m.tryToLogIn("david@gmail.se", "123")
+#print (res1)
 
-res = m.logOut("david@gmail.se")
-print (res)
+#res = m.logOut("david@gmail.se")
+#print (res)
+
+#def printallt(lista):
+ #   for element in lista:
+  #      print(element.toString())
 
 #r = m.getAllEmployees()
-#print (r)
+#printallt(r)
 
 #r = m.getAnOnlineEmployeeByEmail("jens@email.se")
 #print (r)
 
-#r = m.riseSalaryOfAllEmployees(200)
-#print (r)
+r = m.riseSalaryOfAllEmployees(200)
+print (r)
 
 #h = Employee("David", "david@gmail.se","Kungsgatan 12", 20000, "123")
 #w = h.borrowBookToAUser("30", "jens@email.se")
