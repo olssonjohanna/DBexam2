@@ -11,17 +11,27 @@ class Book:
         self.userThatBorrowed = None
         self.list_of_reserved_to = []
 
-    def getStringOfInfoAboutAuthor(self): #VG nivå
+    def getStringOfInfoAboutAuthor(self, author):
         #work with db and return String
+
+        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM Author WHERE Email = '" + str (author) +"';")
+        allInfo = cursor.fetchall()
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+
+        return allInfo
+
         pass
 
 class ManageBook:
     def __init__(self):
         self.connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
-    def getBookByID(self,id): #FUNKAR!
-        #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
-
+    def getBookByID(self,id):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM ISBNBook where ISBN in (select ISBN from Book where bookID = "+str(id)+");")
         row = cursor.fetchone()
@@ -39,7 +49,7 @@ class ManageBook:
 
         return book
 
-    def getBooksByIsbn(self,isbn): #FUNKAR!
+    def getBooksByIsbn(self,isbn):
 #        connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
 
         cursor = self.connection.cursor()
@@ -62,7 +72,7 @@ class ManageBook:
 
         return book
 
-    def getAllBooks(self): #FUNKAR!
+    def getAllBooks(self):
         #connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server}; Server=localhost; Database=Exam2; Trusted_Connection=yes")
         cursor = self.connection.cursor()
         cursor.execute("SELECT ISBNBook.Title, ISBNBook.Pages, ISBNBook.ISBN, Author.Name, bookID from ISBNBook join Book on ISBNBook.ISBN = Book.ISBN join Relation on Relation.ISBN = ISBNBook.ISBN join Author on Author.Email = Relation.Email")
@@ -85,11 +95,16 @@ class ManageBook:
 
         return list_of_Books
 
+#var = ManageBook()
+#result = var.getAllBooks()
+#print(result)
+
+#for each in result:
+#   print(each.title)
 
 
-var = ManageBook()
-result = var.getAllBooks()
-print(result)
 
-for each in result:
-    print(each.title)
+h = Book("f", "1", 10, "5200", "hh")
+v = "b@email.se"
+r = h.getStringOfInfoAboutAuthor(v)
+print (r)
