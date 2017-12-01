@@ -8,15 +8,11 @@ class Employee:
         self.password = password
 
     def borrowBookToAUser(self,book_id,user_email,):
-        #work with db
-        #think that before this book will be borrowed you should check
-        #that no one else in queue to reserve the book
-        #or this user is actually first in the queue
-
-
+        # work with db
+        # add to borrwing table and you must be sure that book_id is not borrowed
+        # at the time
 
         pass
-
 class ManageEmployees:
     def __init__(self):
         self.list_of_online_employees = []
